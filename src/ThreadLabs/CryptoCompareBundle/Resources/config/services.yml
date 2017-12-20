@@ -1,0 +1,8 @@
+services:
+    threadlabs.crypto_compare.api:
+        class: ThreadLabs\CryptoCompareBundle\Api\CryptoCompareApi
+        arguments:
+            - '@threadlabs.crypto_compare.client'
+
+    threadlabs.crypto_compare.client:
+        class: GuzzleHttp\Client

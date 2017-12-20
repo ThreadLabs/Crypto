@@ -6,29 +6,45 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Snc\RedisBundle\Client\Phpredis\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use ThreadLabs\CryptoCompareBundle\Currency\Bitcoin;
+use ThreadLabs\CryptoCompareBundle\Currency\USDollar;
+use ThreadLabs\CryptoCompareBundle\Exchange\Coinbase;
 
 class DefaultController extends Controller
 {
     /**
      * @Route("/", name="homepage")
      */
-    public function indexAction(Request $request)
+    public function indexAction()
     {
-        $data = $this->get('coinmarketcap.api')->getTicker(1);
+        $pairs = [
+
+        ]
+
+
+        $data = $this->get('threadlabs.crypto_compare.api')->getHistoMinute(
+            Bitcoin::SYMBOL,
+            USDollar::SYMBOL,
+            Coinbase::NAME,
+            ['limit' => 1]
+        );
+
+
+        dump($data); die();
 
         /** @var Client $redis */
         $redis = $this->get('snc_redis.default');
 
         foreach ($data as $datum) {
 
-            $id = $redis->incr('currencySnapshot:id');
+            $id = $redis->incr('currency:id');
             $datum['id'] = $id;
 
             $redis->hmset($id, $datum);
-            $redis->zadd('currencySnapshots', $datum['last_updated'], $id);
+            $redis->zadd('currency', $datum['last_updated'], $id);
         }
 
-        $sortedSet = $redis->zRange('currencySnapshots', 0, -1, 'WITHSCORES');
+        $sortedSet = $redis->zRange('currency', 0, -1, 'WITHSCORES');
 
         $results = [];
 
