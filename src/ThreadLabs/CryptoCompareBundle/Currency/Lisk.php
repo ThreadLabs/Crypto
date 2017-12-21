@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Lisk
+class Lisk implements CurrencyInterface
 {
     const ID = 19745;
 

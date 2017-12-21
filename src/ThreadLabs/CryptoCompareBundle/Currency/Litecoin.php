@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Litecoin
+class Litecoin implements CurrencyInterface
 {
     const ID = 3808;
 

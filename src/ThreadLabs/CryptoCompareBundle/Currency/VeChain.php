@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class VeChain
+class VeChain implements CurrencyInterface
 {
     const ID = 236131;
 

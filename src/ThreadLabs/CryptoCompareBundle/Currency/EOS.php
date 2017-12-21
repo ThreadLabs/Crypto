@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class EOS
+class EOS implements CurrencyInterface
 {
     const ID = 166503;
 

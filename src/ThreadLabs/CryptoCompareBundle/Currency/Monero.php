@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Monero
+class Monero implements CurrencyInterface
 {
     const ID = 5038;
 

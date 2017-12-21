@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Tronix
+class Tronix implements CurrencyInterface
 {
     const ID = 310829;
 

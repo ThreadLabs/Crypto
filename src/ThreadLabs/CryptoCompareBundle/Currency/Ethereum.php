@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Ethereum
+class Ethereum implements CurrencyInterface
 {
     const ID = 7605;
 

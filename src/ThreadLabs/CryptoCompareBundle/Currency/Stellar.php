@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Stellar
+class Stellar implements CurrencyInterface
 {
     const ID = 4614;
 

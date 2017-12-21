@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class QTUM
+class QTUM implements CurrencyInterface
 {
     const ID = 112392;
 

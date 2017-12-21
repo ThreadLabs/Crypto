@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Bitcoin
+class Bitcoin implements CurrencyInterface
 {
     const ID = 1182;
 

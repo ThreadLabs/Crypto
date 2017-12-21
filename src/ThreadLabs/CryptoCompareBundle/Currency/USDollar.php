@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class USDollar
+class USDollar implements CurrencyInterface
 {
     const ID = 0;
 
