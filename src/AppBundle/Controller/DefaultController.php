@@ -2,12 +2,12 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Entity\Timeline\DataPoint\CurrencyDataPoint;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Snc\RedisBundle\Client\Phpredis\Client;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use ThreadLabs\CryptoCompareBundle\Currency\Bitcoin;
-use ThreadLabs\CryptoCompareBundle\Currency\USDollar;
+use ThreadLabs\CryptoCompareBundle\Exchange\AbstractExchange;
+use ThreadLabs\CryptoCompareBundle\Exchange\Binance;
 use ThreadLabs\CryptoCompareBundle\Exchange\Coinbase;
 
 class DefaultController extends Controller
@@ -17,31 +17,47 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        $pairs = [
-
-        ]
-
-
-        $data = $this->get('threadlabs.crypto_compare.api')->getHistoMinute(
-            Bitcoin::SYMBOL,
-            USDollar::SYMBOL,
-            Coinbase::NAME,
-            ['limit' => 1]
-        );
-
-
-        dump($data); die();
-
         /** @var Client $redis */
         $redis = $this->get('snc_redis.default');
+        $cryptoCompareApi = $this->get('threadlabs.crypto_compare.api');
 
-        foreach ($data as $datum) {
+        $exchanges = [
+            new Coinbase(),
+            new Binance(),
+        ];
 
-            $id = $redis->incr('currency:id');
-            $datum['id'] = $id;
+        /** @var AbstractExchange $exchange */
+        foreach ($exchanges as $exchange) {
+            $pairs = $exchange->getAvailablePairs();
 
-            $redis->hmset($id, $datum);
-            $redis->zadd('currency', $datum['last_updated'], $id);
+            foreach ($pairs as $pair) {
+                $response = $cryptoCompareApi->getHistoMinute(
+                    $pair->getFrom()->getSymbol(),
+                    $pair->getTo()->getSymbol(),
+                    $exchange->getName(),
+                    [
+                        'limit' => 1,
+                        'aggregate' => 5,
+                    ]
+                );
+
+                $data      = $response['Data'][0];
+                $dataPoint = new CurrencyDataPoint();
+                $id        = $redis->incr('currency:id');
+
+                $dataPoint->setTime($data['time']);
+                $dataPoint->setOpen($data['open']);
+                $dataPoint->setClose($data['close']);
+                $dataPoint->setHigh($data['high']);
+                $dataPoint->setLow($data['low']);
+                $dataPoint->setVolumeFrom($data['volumeFrom']);
+                $dataPoint->setVolumeTo($data['volumeTo']);
+
+                $datum['id'] = $id;
+
+                $redis->hmset($id, $dataPoint->toArray());
+                $redis->zadd('currency', $dataPoint->getTime(), $id);
+            }
         }
 
         $sortedSet = $redis->zRange('currency', 0, -1, 'WITHSCORES');
