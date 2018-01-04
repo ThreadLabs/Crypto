@@ -31,31 +31,58 @@ class DefaultController extends Controller
             $pairs = $exchange->getAvailablePairs();
 
             foreach ($pairs as $pair) {
-                $response = $cryptoCompareApi->getHistoMinute(
-                    $pair->getFrom()->getSymbol(),
-                    $pair->getTo()->getSymbol(),
-                    $exchange->getName(),
-                    [
-                        'limit' => 1,
-                        'aggregate' => 5,
-                    ]
-                );
 
-                $data      = $response['Data'][0];
+                $options = [
+                    'limit'     => 1,
+                    'aggregate' => 5,
+                ];
+
+                $response = $cryptoCompareApi->getHistoMinute($pair, $exchange, $options);
+
+                $rawData   = $response['Data'][0];
                 $dataPoint = new CurrencyDataPoint();
                 $id        = $redis->incr('currency:id');
 
-                $dataPoint->setTime($data['time']);
-                $dataPoint->setOpen($data['open']);
-                $dataPoint->setClose($data['close']);
-                $dataPoint->setHigh($data['high']);
-                $dataPoint->setLow($data['low']);
-                $dataPoint->setVolumeFrom($data['volumeFrom']);
-                $dataPoint->setVolumeTo($data['volumeTo']);
+                $dataPoint->setTime($rawData['time']);
+                $dataPoint->setOpen($rawData['open']);
+                $dataPoint->setClose($rawData['close']);
+                $dataPoint->setHigh($rawData['high']);
+                $dataPoint->setLow($rawData['low']);
+                $dataPoint->setVolumeFrom($rawData['volumefrom']);
+                $dataPoint->setVolumeTo($rawData['volumeto']);
 
-                $datum['id'] = $id;
+                $response = $cryptoCompareApi->getSocialStatsForCurrency($pair->getFrom());
 
-                $redis->hmset($id, $dataPoint->toArray());
+                $rawData = $response['Data'];
+
+                $dataPoint->setTotalSocialPoints($rawData['General']['Points']);
+                $dataPoint->setCryptoCompareSocialPoints($rawData['CryptoCompare']['Points']);
+                $dataPoint->setCryptoCompareFollowers($rawData['CryptoCompare']['Followers']);
+                $dataPoint->setCryptoComparePosts($rawData['CryptoCompare']['Posts']);
+                $dataPoint->setCryptoComparePageViews($rawData['CryptoCompare']['Comments']);
+                $dataPoint->setCryptoCompareComments($rawData['CryptoCompare']['Comments']);
+                $dataPoint->setTwitterSocialPoints($rawData['Twitter']['Points']);
+                $dataPoint->setTwitterLists($rawData['Twitter']['lists']);
+                $dataPoint->setTwitterTweets($rawData['Twitter']['statuses']);
+                $dataPoint->setTwitterFollowers($rawData['Twitter']['followers']);
+                $dataPoint->setRedditSocialPoints($rawData['Reddit']['Points']);
+                $dataPoint->setRedditPostsPerHour($rawData['Reddit']['posts_per_hour']);
+                $dataPoint->setRedditCommentsPerHour($rawData['Reddit']['comments_per_hour']);
+                $dataPoint->setRedditPostsPerDay($rawData['Reddit']['posts_per_day']);
+                $dataPoint->setRedditCommentsPerDay($rawData['Reddit']['comments_per_day']);
+                $dataPoint->setRedditActiveUsers($rawData['Reddit']['active_users']);
+                $dataPoint->setRedditCommunityCreation($rawData['Reddit']['community_creation']);
+                $dataPoint->setRedditSubscribers($rawData['Reddit']['subscribers']);
+                $dataPoint->setFacebookSocialPoints($rawData['Facebook']['Points']);
+                $dataPoint->setFacebookLikes($rawData['Facebook']['likes']);
+                $dataPoint->setFacebookTalkingAbout($rawData['Facebook']['talking_about']);
+                $dataPoint->setCodeRepositorySocialPoints($rawData['CodeRepository']['Points']);
+
+                $cleanedData = $dataPoint->toArray();
+
+                $cleanedData['id'] = $id;
+
+                $redis->hmset($id, $cleanedData);
                 $redis->zadd('currency', $dataPoint->getTime(), $id);
             }
         }

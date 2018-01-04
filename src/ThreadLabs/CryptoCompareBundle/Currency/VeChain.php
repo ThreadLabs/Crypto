@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class VeChain implements CurrencyInterface
+class VeChain extends AbstractCurrency
 {
     const ID = 236131;
 

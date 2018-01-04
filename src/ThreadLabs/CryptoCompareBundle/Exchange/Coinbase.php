@@ -10,7 +10,18 @@ use ThreadLabs\CryptoCompareBundle\Currency\USDollar;
 
 class Coinbase extends AbstractExchange
 {
+    // @todo find the right IDs
+    const ID = 0;
+
     const NAME = 'Coinbase';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return self::ID;
+    }
 
     /**
      * {@inheritdoc}

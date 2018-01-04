@@ -5,27 +5,27 @@ namespace ThreadLabs\CryptoCompareBundle\Currency;
 class CurrencyPair
 {
     /**
-     * @var CurrencyInterface
+     * @var AbstractCurrency
      */
     private $from;
 
     /**
-     * @var CurrencyInterface
+     * @var AbstractCurrency
      */
     private $to;
 
     /**
-     * @param CurrencyInterface $from
-     * @param CurrencyInterface $to
+     * @param AbstractCurrency $from
+     * @param AbstractCurrency $to
      */
-    public function __construct(CurrencyInterface $from, CurrencyInterface $to)
+    public function __construct(AbstractCurrency $from, AbstractCurrency $to)
     {
         $this->from = $from;
         $this->to = $to;
     }
 
     /**
-     * @return CurrencyInterface
+     * @return AbstractCurrency
      */
     public function getFrom()
     {
@@ -33,7 +33,7 @@ class CurrencyPair
     }
 
     /**
-     * @param CurrencyInterface $from
+     * @param AbstractCurrency $from
      */
     public function setFrom($from)
     {
@@ -41,7 +41,7 @@ class CurrencyPair
     }
 
     /**
-     * @return CurrencyInterface
+     * @return AbstractCurrency
      */
     public function getTo()
     {
@@ -49,7 +49,7 @@ class CurrencyPair
     }
 
     /**
-     * @param CurrencyInterface $to
+     * @param AbstractCurrency $to
      */
     public function setTo($to)
     {

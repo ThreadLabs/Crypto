@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Stellar implements CurrencyInterface
+class Stellar extends AbstractCurrency
 {
     const ID = 4614;
 

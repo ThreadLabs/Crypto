@@ -3,6 +3,9 @@
 namespace ThreadLabs\CryptoCompareBundle\Api;
 
 use GuzzleHttp\Client;
+use ThreadLabs\CryptoCompareBundle\Currency\AbstractCurrency;
+use ThreadLabs\CryptoCompareBundle\Currency\CurrencyPair;
+use ThreadLabs\CryptoCompareBundle\Exchange\AbstractExchange;
 
 class CryptoCompareApi
 {
@@ -10,6 +13,9 @@ class CryptoCompareApi
     const BASE_URI_MIN_API = 'https://min-api.cryptocompare.com/data/';
 
     const ENDPOINT_HISTO_MINUTE = 'histominute';
+    const ENDPOINT_HISTO_HOUR   = 'histohour';
+    const ENDPOINT_HISTO_DAY    = 'histoday';
+    const ENDPOINT_SOCIAL_STATS = 'socialstats';
 
     /**
      * @var Client
@@ -25,33 +31,87 @@ class CryptoCompareApi
     }
 
     /**
-     * @param string $currencyFrom
-     * @param string $currencyTo
-     * @param string $exchange
-     * @param array  $options
+     * @param CurrencyPair            $pair
+     * @param string|AbstractExchange $exchange
+     * @param array                   $options
      *
      * @return array|null
      */
-    public function getHistoMinute($currencyFrom, $currencyTo, $exchange, array $options = [])
+    public function getHistoMinute(CurrencyPair $pair, AbstractExchange $exchange, array $options = [])
     {
-        $parameters = $this->buildHistoryParameters($currencyFrom, $currencyTo, $exchange, $options);
+        $parameters = $this->buildHistoryParameters($pair, $exchange, $options);
 
         return $this->request(self::BASE_URI_MIN_API, self::ENDPOINT_HISTO_MINUTE, $parameters);
     }
 
     /**
-     * @param string $currencyFrom
-     * @param string $currencyTo
-     * @param string $exchange
-     * @param array  $options
+     * @param CurrencyPair            $pair
+     * @param string|AbstractExchange $exchange
+     * @param array                   $options
+     *
+     * @return array|null
+     */
+    public function getHistoHour(CurrencyPair $pair, AbstractExchange $exchange, array $options = [])
+    {
+        $parameters = $this->buildHistoryParameters($pair, $exchange, $options);
+
+        return $this->request(self::BASE_URI_MIN_API, self::ENDPOINT_HISTO_HOUR, $parameters);
+    }
+
+    /**
+     * @param CurrencyPair            $pair
+     * @param string|AbstractExchange $exchange
+     * @param array                   $options
+     *
+     * @return array|null
+     */
+    public function getHistoDay(CurrencyPair $pair, AbstractExchange $exchange, array $options = [])
+    {
+        $parameters = $this->buildHistoryParameters($pair, $exchange, $options);
+
+        return $this->request(self::BASE_URI_MIN_API, self::ENDPOINT_HISTO_DAY, $parameters);
+    }
+
+    /**
+     * @param AbstractCurrency $currency
+     *
+     * @return array|null
+     */
+    public function getSocialStatsForCurrency(AbstractCurrency $currency)
+    {
+        $parameters = [
+            'id' => $currency->getId(),
+        ];
+
+        return $this->request(self::BASE_URI_API, self::ENDPOINT_SOCIAL_STATS, $parameters);
+    }
+
+    /**
+     * @param AbstractExchange $exchange
+     *
+     * @return array|null
+     */
+    public function getSocialStatsForExchange(AbstractExchange $exchange)
+    {
+        $parameters = [
+            'id' => $exchange->getId(),
+        ];
+
+        return $this->request(self::BASE_URI_API, self::ENDPOINT_SOCIAL_STATS, $parameters);
+    }
+
+    /**
+     * @param CurrencyPair            $pair
+     * @param string|AbstractExchange $exchange
+     * @param array                   $options
      *
      * @return array
      */
-    private function buildHistoryParameters($currencyFrom, $currencyTo, $exchange, array $options = [])
+    private function buildHistoryParameters(CurrencyPair $pair, AbstractExchange $exchange, array $options = [])
     {
         return array_replace($options, [
-            'fsym' => $currencyFrom,
-            'tsym' => $currencyTo,
+            'fsym' => $pair->getFrom()->getSymbol(),
+            'tsym' => $pair->getTo()->getSymbol(),
             'e'    => $exchange,
         ]);
     }

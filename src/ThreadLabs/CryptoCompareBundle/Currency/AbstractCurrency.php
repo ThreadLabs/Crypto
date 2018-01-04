@@ -2,20 +2,20 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-interface CurrencyInterface
+abstract class AbstractCurrency
 {
     /**
      * @return int
      */
-    public function getId();
+    abstract public function getId();
 
     /**
      * @return string
      */
-    public function getSymbol();
+    abstract public function getSymbol();
 
     /**
      * @return string
      */
-    public function getName();
+    abstract public function getName();
 }

@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class NEO implements CurrencyInterface
+class NEO extends AbstractCurrency
 {
     const ID = 27368;
 

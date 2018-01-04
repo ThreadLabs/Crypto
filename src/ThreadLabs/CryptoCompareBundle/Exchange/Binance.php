@@ -15,7 +15,18 @@ use ThreadLabs\CryptoCompareBundle\Currency\Verge;
 
 class Binance extends AbstractExchange
 {
+    // @todo find the right IDs
+    const ID = 0;
+
     const NAME = 'Binance';
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return self::ID;
+    }
 
     /**
      * {@inheritdoc}

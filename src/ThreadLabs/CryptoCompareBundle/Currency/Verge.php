@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Verge implements CurrencyInterface
+class Verge extends AbstractCurrency
 {
     const ID = 4433;
 

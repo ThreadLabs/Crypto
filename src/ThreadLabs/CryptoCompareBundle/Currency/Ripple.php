@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Ripple implements CurrencyInterface
+class Ripple extends AbstractCurrency
 {
     const ID = 5031;
 

@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class NEM implements CurrencyInterface
+class NEM extends AbstractCurrency
 {
     const ID = 5285;
 

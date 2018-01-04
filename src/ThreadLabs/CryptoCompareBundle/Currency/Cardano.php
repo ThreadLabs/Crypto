@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class Cardano implements CurrencyInterface
+class Cardano extends AbstractCurrency
 {
     const ID = 321992;
 

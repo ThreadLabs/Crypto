@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class ZCash implements CurrencyInterface
+class ZCash extends AbstractCurrency
 {
     const ID = 24854;
 

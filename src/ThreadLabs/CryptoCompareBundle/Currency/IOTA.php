@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class IOTA implements CurrencyInterface
+class IOTA extends AbstractCurrency
 {
     const ID = 127356;
 

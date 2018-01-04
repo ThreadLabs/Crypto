@@ -2,7 +2,7 @@
 
 namespace ThreadLabs\CryptoCompareBundle\Currency;
 
-class DigitalCash implements CurrencyInterface
+class DigitalCash extends AbstractCurrency
 {
     const ID = 3807;
 
